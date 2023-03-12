@@ -5,14 +5,27 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager as BUM
 from django.contrib.auth.models import PermissionsMixin
 
-
+from django.core.exceptions import ValidationError
 
 class BaseUserManager(BUM):
-    def create_user(self, email, is_active=True, is_admin=False, password=None):
+    def create_user(self, 
+        email, 
+        is_active=True,
+        is_admin=False, 
+        password=None , 
+        ID=None , 
+        first_name=None , 
+        last_name = None):
+
         if not email:
             raise ValueError("Users must have an email address")
 
-        user = self.model(email=self.normalize_email(email.lower()), is_active=is_active, is_admin=is_admin)
+        user = self.model(email=self.normalize_email(email.lower()),
+            is_active=is_active, 
+            is_admin=is_admin,
+            ID = ID , 
+            first_name = first_name , 
+            last_name=last_name)
 
         if password is not None:
             user.set_password(password)
@@ -24,12 +37,15 @@ class BaseUserManager(BUM):
 
         return user
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, email , ID=None , first_name = None ,  last_name=None ,password=None):
         user = self.create_user(
             email=email,
             is_active=True,
             is_admin=True,
+            first_name=first_name,
+            last_name=last_name,
             password=password,
+            ID = ID
         )
 
         user.is_superuser = True
@@ -38,17 +54,25 @@ class BaseUserManager(BUM):
         return user
 
 
+
+
 class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
+
+    ID = models.CharField(unique=True , max_length=10 )
 
     email = models.EmailField(verbose_name = "email address",
                               unique=True)
+
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = BaseUserManager()
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "ID"
 
     def __str__(self):
         return self.email

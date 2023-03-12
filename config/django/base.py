@@ -81,21 +81,36 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///devopshobbies'),
+    'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bdsgtyfs',
+            'USER': 'bdsgtyfs',
+            'PASSWORD': 'mGym3T9sMwxkqhP3jO2ZCPTJnNfaTCim',
+            'HOST': 'isilo.db.elephantsql.com',
+            'PORT': '5432',
+            'TEST':{
+                'MIRROR': 'default',
+            }
+            
+        }
 }
+
+
+
+
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-if os.environ.get('GITHUB_WORKFLOW'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'github_actions',
-            'USER': 'user',
-            'PASSWORD': 'password',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
-    }
+# if os.environ.get('GITHUB_WORKFLOW'):
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'github_actions',
+#             'USER': 'user',
+#             'PASSWORD': 'password',
+#             'HOST': '127.0.0.1',
+#             'PORT': '5432',
+#         }
+#     }
 
 
 # Password validation
