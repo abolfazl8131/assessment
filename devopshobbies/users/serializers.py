@@ -56,12 +56,25 @@ class InputRegisterSerializer(serializers.Serializer):
             return data
 
 class InputUpdateSerializer(serializers.Serializer):
-        email = serializers.EmailField(max_length=255)
+        email = serializers.EmailField(max_length=255 , required=False)
         bio = serializers.CharField(max_length=1000, required=False)
-        ID = serializers.CharField(max_length=10)
-        first_name = serializers.CharField(max_length = 100)
-        last_name = serializers.CharField(max_length = 100)
+        ID = serializers.CharField(max_length=10, required=False)
+        first_name = serializers.CharField(max_length = 100, required=False)
+        last_name = serializers.CharField(max_length = 100, required=False)
 
+        def update(self, instance, validated_data):
+
+            instance.email = validated_data.get('email', instance.email)
+
+            instance.ID = validated_data.get('ID', instance.ID)
+
+            instance.first_name = validated_data.get('first_name', instance.first_name)
+
+            instance.last_name = validated_data.get('last_name', instance.last_name)
+
+            instance.bio = validated_data.get('bio', instance.bio)
+
+            return instance
 
         def validate_ID(self , ID):
             if not ID.isnumeric():
@@ -69,7 +82,7 @@ class InputUpdateSerializer(serializers.Serializer):
             return ID
         
         def validate_email(self, email):
-            if BaseUser.objects.filter(email=email).exists():
+            if BaseUser.objects.filter(email=email).count() > 1:
                 raise serializers.ValidationError("email Already Taken")
             return email
 

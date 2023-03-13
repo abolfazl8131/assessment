@@ -57,6 +57,7 @@ def register_superuser(*,  email:str,ID:int , first_name:str,last_name:str, pass
 
     return user
 
+@transaction.atomic
 def update(* , bio:str|None, ID:int , first_name:str,last_name:str,email:str) -> BaseUser:
     user = update_user(
         email = email,
